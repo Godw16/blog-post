@@ -70,7 +70,7 @@ const Header = () => {
               textDecoration: 'none',
             }}
           >
-            EXPONENTIAL BLOG
+            S0ULCREW BLOG
           </Typography>
 
           {/* Mobile menu */}
@@ -128,7 +128,7 @@ const Header = () => {
               textDecoration: 'none',
             }}
           >
-            EXPONENTIAL
+            S0ULCREW
           </Typography>
 
           {/* Desktop menu */}
