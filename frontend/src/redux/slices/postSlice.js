@@ -13,44 +13,11 @@ export const getPosts = createAsyncThunk(
   'posts/getPosts',
   async (_, { rejectWithValue }) => {
     try {
-      // Comment this out temporarily
-      // const res = await axios.get('/api/posts');
-      // console.log('API response data:', res.data);
-      // return res.data;
-      
-      // Use mock data instead
-      console.log('Using mock data while API is being fixed');
-      return [
-        {
-          _id: '1',
-          title: 'Sample Post 1',
-          content: 'This is a sample post about React development',
-          author: { name: 'John Doe' },
-          date: new Date().toISOString(),
-          image: 'https://via.placeholder.com/300',
-          tags: ['react', 'javascript', 'frontend']
-        },
-        {
-          _id: '2',
-          title: 'Sample Post 2',
-          content: 'This is another sample post about Redux state management',
-          author: { name: 'Jane Smith' },
-          date: new Date().toISOString(),
-          image: 'https://via.placeholder.com/300',
-          tags: ['redux', 'state management', 'react']
-        },
-        {
-          _id: '3',
-          title: 'Sample Post 3',
-          content: 'Let\'s explore Material UI components in React applications',
-          author: { name: 'Mike Johnson' },
-          date: new Date().toISOString(),
-          image: 'https://via.placeholder.com/300',
-          tags: ['material-ui', 'components', 'design']
-        }
-      ];
+      const res = await axios.get('/api/posts');
+      console.log('API response data:', res.data);
+      return res.data;
     } catch (err) {
-      return rejectWithValue(err.response?.data?.message || 'Error fetching posts');
+      return rejectWithValue(err.response.data.message);
     }
   }
 );
@@ -60,59 +27,10 @@ export const getPostById = createAsyncThunk(
   'posts/getPostById',
   async (id, { rejectWithValue }) => {
     try {
-      // Comment this out temporarily
-      // const res = await axios.get(`/api/posts/${id}`);
-      // return res.data;
-      
-      // Use mock data instead
-      console.log('Using mock data for post by ID while API is being fixed');
-      const mockPosts = [
-        {
-          _id: '1',
-          title: 'Sample Post 1',
-          content: 'This is a sample post about React development. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget aliquam nisl nisl sit amet nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget aliquam nisl nisl sit amet nisl.',
-          author: { name: 'John Doe', _id: 'user1' },
-          date: new Date().toISOString(),
-          image: 'https://via.placeholder.com/800x400',
-          tags: ['react', 'javascript', 'frontend'],
-          comments: [
-            { _id: 'c1', text: 'Great post!', author: { name: 'Commenter 1' }, date: new Date().toISOString() },
-            { _id: 'c2', text: 'Thanks for sharing this info', author: { name: 'Commenter 2' }, date: new Date().toISOString() }
-          ]
-        },
-        {
-          _id: '2',
-          title: 'Sample Post 2',
-          content: 'This is another sample post about Redux state management. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget aliquam nisl nisl sit amet nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget aliquam nisl nisl sit amet nisl.',
-          author: { name: 'Jane Smith', _id: 'user2' },
-          date: new Date().toISOString(),
-          image: 'https://via.placeholder.com/800x400',
-          tags: ['redux', 'state management', 'react'],
-          comments: [
-            { _id: 'c3', text: 'This helped me a lot', author: { name: 'Commenter 3' }, date: new Date().toISOString() }
-          ]
-        },
-        {
-          _id: '3',
-          title: 'Sample Post 3',
-          content: 'Let\'s explore Material UI components in React applications. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget aliquam nisl nisl sit amet nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget aliquam nisl nisl sit amet nisl.',
-          author: { name: 'Mike Johnson', _id: 'user3' },
-          date: new Date().toISOString(),
-          image: 'https://via.placeholder.com/800x400',
-          tags: ['material-ui', 'components', 'design'],
-          comments: []
-        }
-      ];
-      
-      const post = mockPosts.find(post => post._id === id);
-      
-      if (post) {
-        return post;
-      } else {
-        return rejectWithValue('Post not found');
-      }
+      const res = await axios.get(`/api/posts/${id}`);
+      return res.data;
     } catch (err) {
-      return rejectWithValue(err.response?.data?.message || 'Error fetching post');
+      return rejectWithValue(err.response.data.message);
     }
   }
 );
@@ -129,24 +47,10 @@ export const createPost = createAsyncThunk(
           'x-auth-token': token
         }
       };
-      // Comment this out temporarily
-      // const res = await axios.post('/api/posts', postData, config);
-      // return res.data;
-      
-      // Use mock data instead
-      console.log('Using mock data for creating post while API is being fixed');
-      // Create a new post with mock data
-      const newPost = {
-        _id: Date.now().toString(),
-        ...postData,
-        author: { name: 'Current User', _id: 'current-user' },
-        date: new Date().toISOString(),
-        comments: []
-      };
-      
-      return newPost;
+      const res = await axios.post('/api/posts', postData, config);
+      return res.data;
     } catch (err) {
-      return rejectWithValue(err.response?.data?.message || 'Error creating post');
+      return rejectWithValue(err.response.data.message);
     }
   }
 );
@@ -163,23 +67,10 @@ export const updatePost = createAsyncThunk(
           'x-auth-token': token
         }
       };
-      // Comment this out temporarily
-      // const res = await axios.put(`/api/posts/${id}`, postData, config);
-      // return res.data;
-      
-      // Use mock data instead
-      console.log('Using mock data for updating post while API is being fixed');
-      // Update the post with mock data
-      const updatedPost = {
-        _id: id,
-        ...postData,
-        author: { name: 'Current User', _id: 'current-user' },
-        date: new Date().toISOString()
-      };
-      
-      return updatedPost;
+      const res = await axios.put(`/api/posts/${id}`, postData, config);
+      return res.data;
     } catch (err) {
-      return rejectWithValue(err.response?.data?.message || 'Error updating post');
+      return rejectWithValue(err.response.data.message);
     }
   }
 );
@@ -195,14 +86,10 @@ export const deletePost = createAsyncThunk(
           'x-auth-token': token
         }
       };
-      // Comment this out temporarily
-      // await axios.delete(`/api/posts/${id}`, config);
-      
-      // Use mock data instead
-      console.log('Using mock data for deleting post while API is being fixed');
+      await axios.delete(`/api/posts/${id}`, config);
       return id;
     } catch (err) {
-      return rejectWithValue(err.response?.data?.message || 'Error deleting post');
+      return rejectWithValue(err.response.data.message);
     }
   }
 );
