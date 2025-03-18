@@ -14,6 +14,7 @@ export const getPosts = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const res = await axios.get('/api/posts');
+      console.log('API response data:', res.data);
       return res.data;
     } catch (err) {
       return rejectWithValue(err.response.data.message);
@@ -112,7 +113,19 @@ const postSlice = createSlice({
       })
       .addCase(getPosts.fulfilled, (state, action) => {
         state.loading = false;
-        state.posts = action.payload;
+        // Handle different response formats
+        if (Array.isArray(action.payload)) {
+          // If API returns array directly
+          state.posts = action.payload;
+        } else if (action.payload && typeof action.payload === 'object' && action.payload.posts) {
+          // If API returns object with posts property
+          state.posts = action.payload.posts;
+        } else {
+          // Fallback to empty array if unexpected format
+          console.error('Unexpected API response format:', action.payload);
+          state.posts = [];
+          state.error = 'Invalid data format received';
+        }
       })
       .addCase(getPosts.rejected, (state, action) => {
         state.loading = false;

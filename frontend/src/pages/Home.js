@@ -7,10 +7,13 @@ import Alert from '../components/common/Alert';
 
 const Home = () => {
   const dispatch = useDispatch();
-  const { posts, loading, error } = useSelector((state) => state.posts);
+  // Use default empty array if posts is undefined
+  const { posts = [], loading, error } = useSelector((state) => state.posts);
 
   useEffect(() => {
-    dispatch(getPosts());
+    dispatch(getPosts())
+      .then(response => console.log('Posts response:', response))
+      .catch(error => console.error('Error fetching posts:', error));
   }, [dispatch]);
 
   return (
@@ -32,11 +35,11 @@ const Home = () => {
         </Box>
       ) : error ? (
         <Typography color="error">{error}</Typography>
-      ) : posts.length === 0 ? (
+      ) : Array.isArray(posts) && posts.length === 0 ? (
         <Typography variant="h6" sx={{ textAlign: 'center', mt: 4 }}>
           No posts found. Be the first to create a post!
         </Typography>
-      ) : (
+      ) : Array.isArray(posts) ? (
         <Grid container spacing={3}>
           {posts.map((post) => (
             <Grid item xs={12} sm={6} md={4} key={post._id}>
@@ -44,6 +47,10 @@ const Home = () => {
             </Grid>
           ))}
         </Grid>
+      ) : (
+        <Typography color="error">
+          Invalid data format received for posts. Please check the console for details.
+        </Typography>
       )}
     </Container>
   );
