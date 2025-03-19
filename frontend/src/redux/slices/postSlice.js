@@ -216,7 +216,7 @@
 // export default postSlice.reducer;
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import api from '../../api/api';  // Import the configured API instance
 
 const initialState = {
   posts: [],
@@ -230,8 +230,7 @@ export const getPosts = createAsyncThunk(
   'posts/getPosts',
   async (_, { rejectWithValue }) => {
     try {
-      // Use relative URL for the API - this will work with the proxy
-      const res = await axios.get('/api/posts');
+      const res = await api.get('/api/posts');  // Use the api instance
       console.log('API response data:', res.data);
       return res.data;
     } catch (err) {
@@ -248,7 +247,7 @@ export const getPostById = createAsyncThunk(
   'posts/getPostById',
   async (id, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`/api/posts/${id}`);
+      const res = await api.get(`/api/posts/${id}`);  // Use the api instance
       return res.data;
     } catch (err) {
       return rejectWithValue(
@@ -266,11 +265,10 @@ export const createPost = createAsyncThunk(
       const { token } = getState().auth;
       const config = {
         headers: {
-          'Content-Type': 'application/json',
           'x-auth-token': token
         }
       };
-      const res = await axios.post('/api/posts', postData, config);
+      const res = await api.post('/api/posts', postData, config);  // Use the api instance
       return res.data;
     } catch (err) {
       return rejectWithValue(
@@ -288,11 +286,10 @@ export const updatePost = createAsyncThunk(
       const { token } = getState().auth;
       const config = {
         headers: {
-          'Content-Type': 'application/json',
           'x-auth-token': token
         }
       };
-      const res = await axios.put(`/api/posts/${id}`, postData, config);
+      const res = await api.put(`/api/posts/${id}`, postData, config);  // Use the api instance
       return res.data;
     } catch (err) {
       return rejectWithValue(
@@ -313,7 +310,7 @@ export const deletePost = createAsyncThunk(
           'x-auth-token': token
         }
       };
-      await axios.delete(`/api/posts/${id}`, config);
+      await api.delete(`/api/posts/${id}`, config);  // Use the api instance
       return id;
     } catch (err) {
       return rejectWithValue(
