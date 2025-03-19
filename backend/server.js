@@ -12,9 +12,9 @@ dotenv.config();
 
 const app = express();
 
-// CORS configuration - update this part
+// Updated CORS configuration to allow both your Vercel frontend and localhost
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  origin: ['https://blog-post-one-pi.vercel.app/', 'http://localhost:3000'],
   credentials: true
 }));
 
