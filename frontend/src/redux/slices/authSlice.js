@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import api from '../../api/api';
 
 const initialState = {
   token: localStorage.getItem('token'),
@@ -14,13 +14,8 @@ export const register = createAsyncThunk(
   'auth/register',
   async ({ username, email, password }, { rejectWithValue }) => {
     try {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      };
       const body = JSON.stringify({ username, email, password });
-      const res = await axios.post('/api/auth/register', body, config);
+      const res = await api.post('/api/auth/register', body);
       return res.data;
     } catch (err) {
       return rejectWithValue(err.response.data.message);
@@ -33,13 +28,8 @@ export const login = createAsyncThunk(
   'auth/login',
   async ({ email, password }, { rejectWithValue }) => {
     try {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      };
       const body = JSON.stringify({ email, password });
-      const res = await axios.post('/api/auth/login', body, config);
+      const res = await api.post('/api/auth/login', body);
       return res.data;
     } catch (err) {
       return rejectWithValue(err.response.data.message);
@@ -58,7 +48,7 @@ export const getCurrentUser = createAsyncThunk(
           'x-auth-token': token
         }
       };
-      const res = await axios.get('/api/auth/user', config);
+      const res = await api.get('/api/auth/user', config);
       return res.data;
     } catch (err) {
       return rejectWithValue(err.response.data.message);
