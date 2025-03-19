@@ -12,9 +12,13 @@ dotenv.config();
 
 const app = express();
 
-// CORS configuration fixed - removed trailing slash from Vercel URL
+// Updated CORS configuration to include the new Vercel deployment URL
 app.use(cors({
-  origin: ['https://blog-post-one-pi.vercel.app', 'http://localhost:3000'],
+  origin: [
+    'https://blog-post-one-pi.vercel.app', 
+    'https://blog-post-git-main-godwins-projects-de697963.vercel.app',
+    'http://localhost:3000'
+  ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
