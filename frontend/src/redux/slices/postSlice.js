@@ -8,16 +8,24 @@ const initialState = {
   error: null
 };
 
+// Define base URL for your API
+// Change this to your actual API URL
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
 // Get all posts
 export const getPosts = createAsyncThunk(
   'posts/getPosts',
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axios.get('/api/posts');
+      // Use the full URL path to your API
+      const res = await axios.get(`${API_BASE_URL}/api/posts`);
       console.log('API response data:', res.data);
       return res.data;
     } catch (err) {
-      return rejectWithValue(err.response.data.message);
+      console.error('API error:', err);
+      return rejectWithValue(
+        err.response?.data?.message || 'Failed to fetch posts'
+      );
     }
   }
 );
@@ -27,10 +35,12 @@ export const getPostById = createAsyncThunk(
   'posts/getPostById',
   async (id, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`/api/posts/${id}`);
+      const res = await axios.get(`${API_BASE_URL}/api/posts/${id}`);
       return res.data;
     } catch (err) {
-      return rejectWithValue(err.response.data.message);
+      return rejectWithValue(
+        err.response?.data?.message || 'Failed to fetch post'
+      );
     }
   }
 );
@@ -47,10 +57,12 @@ export const createPost = createAsyncThunk(
           'x-auth-token': token
         }
       };
-      const res = await axios.post('/api/posts', postData, config);
+      const res = await axios.post(`${API_BASE_URL}/api/posts`, postData, config);
       return res.data;
     } catch (err) {
-      return rejectWithValue(err.response.data.message);
+      return rejectWithValue(
+        err.response?.data?.message || 'Failed to create post'
+      );
     }
   }
 );
@@ -67,10 +79,12 @@ export const updatePost = createAsyncThunk(
           'x-auth-token': token
         }
       };
-      const res = await axios.put(`/api/posts/${id}`, postData, config);
+      const res = await axios.put(`${API_BASE_URL}/api/posts/${id}`, postData, config);
       return res.data;
     } catch (err) {
-      return rejectWithValue(err.response.data.message);
+      return rejectWithValue(
+        err.response?.data?.message || 'Failed to update post'
+      );
     }
   }
 );
@@ -86,10 +100,12 @@ export const deletePost = createAsyncThunk(
           'x-auth-token': token
         }
       };
-      await axios.delete(`/api/posts/${id}`, config);
+      await axios.delete(`${API_BASE_URL}/api/posts/${id}`, config);
       return id;
     } catch (err) {
-      return rejectWithValue(err.response.data.message);
+      return rejectWithValue(
+        err.response?.data?.message || 'Failed to delete post'
+      );
     }
   }
 );
@@ -110,30 +126,38 @@ const postSlice = createSlice({
       // Get all posts
       .addCase(getPosts.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(getPosts.fulfilled, (state, action) => {
         state.loading = false;
-        // Handle different response formats
-        if (Array.isArray(action.payload)) {
-          // If API returns array directly
-          state.posts = action.payload;
-        } else if (action.payload && typeof action.payload === 'object' && action.payload.posts) {
-          // If API returns object with posts property
-          state.posts = action.payload.posts;
-        } else {
-          // Fallback to empty array if unexpected format
-          console.error('Unexpected API response format:', action.payload);
+        try {
+          // Handle different response formats
+          if (Array.isArray(action.payload)) {
+            // If API returns array directly
+            state.posts = action.payload;
+          } else if (action.payload && typeof action.payload === 'object' && action.payload.posts) {
+            // If API returns object with posts property
+            state.posts = action.payload.posts;
+          } else {
+            // Fallback to empty array if unexpected format
+            console.error('Unexpected API response format:', action.payload);
+            state.posts = [];
+            state.error = 'Invalid data format received';
+          }
+        } catch (err) {
+          console.error('Error processing response:', err);
           state.posts = [];
-          state.error = 'Invalid data format received';
+          state.error = 'Error processing data';
         }
       })
       .addCase(getPosts.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload || 'Something went wrong';
       })
       // Get post by ID
       .addCase(getPostById.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(getPostById.fulfilled, (state, action) => {
         state.loading = false;
@@ -141,11 +165,12 @@ const postSlice = createSlice({
       })
       .addCase(getPostById.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload || 'Something went wrong';
       })
       // Create post
       .addCase(createPost.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(createPost.fulfilled, (state, action) => {
         state.loading = false;
@@ -153,11 +178,12 @@ const postSlice = createSlice({
       })
       .addCase(createPost.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload || 'Something went wrong';
       })
       // Update post
       .addCase(updatePost.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(updatePost.fulfilled, (state, action) => {
         state.loading = false;
@@ -168,11 +194,12 @@ const postSlice = createSlice({
       })
       .addCase(updatePost.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload || 'Something went wrong';
       })
       // Delete post
       .addCase(deletePost.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(deletePost.fulfilled, (state, action) => {
         state.loading = false;
@@ -180,14 +207,10 @@ const postSlice = createSlice({
       })
       .addCase(deletePost.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload || 'Something went wrong';
       });
   }
 });
 
 export const { clearPost, clearError } = postSlice.actions;
 export default postSlice.reducer;
-
-
-
-

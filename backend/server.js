@@ -12,8 +12,12 @@ dotenv.config();
 
 const app = express();
 
-// Middleware
-app.use(cors());
+// CORS configuration - update this part
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  credentials: true
+}));
+
 app.use(helmet());
 app.use(express.json());
 
@@ -23,7 +27,6 @@ app.set('trust proxy', 1);
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100 // limit each IP to 100 requests per windowMs
- 
 });
 
 // Apply to authentication routes 

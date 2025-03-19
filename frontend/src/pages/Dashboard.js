@@ -25,7 +25,7 @@ import Alert from '../components/common/Alert';
 
 const Dashboard = () => {
   const dispatch = useDispatch();
-  const { posts, loading } = useSelector((state) => state.posts);
+  const { posts = [], loading } = useSelector((state) => state.posts);
   const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
@@ -39,8 +39,18 @@ const Dashboard = () => {
     }
   };
 
-  // Filter posts by current user
-  const userPosts = posts.filter(post => post.author._id === user?.id);
+  // Safely filter posts by current user
+  // This handles different possible data structures
+  const userPosts = Array.isArray(posts) ? posts.filter(post => {
+    // Check if post exists
+    if (!post) return false;
+    
+    // Check for author property
+    const authorId = post.author?._id || post.author || post.user;
+    const userId = user?.id || user?._id;
+    
+    return authorId && userId && (authorId === userId);
+  }) : [];
 
   return (
     <Container maxWidth="lg">
@@ -112,16 +122,16 @@ const Dashboard = () => {
                       {post.title}
                     </RouterLink>
                   </TableCell>
-                  <TableCell>{new Date(post.createdAt).toLocaleDateString()}</TableCell>
+                  <TableCell>{post.createdAt ? new Date(post.createdAt).toLocaleDateString() : 'N/A'}</TableCell>
                   <TableCell>
-                    {post.tags && post.tags.map((tag, index) => (
+                    {post.tags && Array.isArray(post.tags) ? post.tags.map((tag, index) => (
                       <Chip 
                         key={index} 
                         label={tag} 
                         size="small" 
                         sx={{ mr: 0.5, mb: 0.5, backgroundColor: '#EEEEEE' }} 
                       />
-                    ))}
+                    )) : null}
                   </TableCell>
                   <TableCell align="right">
                     <IconButton component={RouterLink} to={`/edit-post/${post._id}`} color="primary">

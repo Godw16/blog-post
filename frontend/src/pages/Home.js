@@ -7,11 +7,12 @@ import Alert from '../components/common/Alert';
 
 const Home = () => {
   const dispatch = useDispatch();
-  // Use default empty array if posts is undefined
   const { posts = [], loading, error } = useSelector((state) => state.posts);
 
   useEffect(() => {
+    // Dispatch the getPosts action
     dispatch(getPosts())
+      .unwrap() // Properly unwrap the result
       .then(response => console.log('Posts response:', response))
       .catch(error => console.error('Error fetching posts:', error));
   }, [dispatch]);
