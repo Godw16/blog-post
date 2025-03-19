@@ -12,10 +12,12 @@ dotenv.config();
 
 const app = express();
 
-// Updated CORS configuration to allow both your Vercel frontend and localhost
+// CORS configuration fixed - removed trailing slash from Vercel URL
 app.use(cors({
-  origin: ['https://blog-post-one-pi.vercel.app/', 'http://localhost:3000'],
-  credentials: true
+  origin: ['https://blog-post-one-pi.vercel.app', 'http://localhost:3000'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.use(helmet());
